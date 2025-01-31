@@ -1,0 +1,22 @@
+DESCRIPTION >
+	Gets all listening activities of a single Entity in a given timeframe
+
+
+TOKEN "retool_token" READ
+TOKEN "graph_dev" READ
+
+NODE entity_listening_durations_local_pipe
+SQL >
+  %
+  SELECT
+    properties_onAssetId as assetId,
+    properties_start as start,
+    properties_end as end,
+    properties_date AS date,
+    properties_version AS version
+  FROM rudderstack_listening_local
+  WHERE
+    properties_byEntityId = {{ String(entity_id) }}
+    AND date >= {{ Date(start_date) }}
+    AND date <= {{ Date(end_date) }}
+  ORDER BY date ASC

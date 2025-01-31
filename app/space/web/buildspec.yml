@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - cd app/space/web
+      - npm install
+
+  build:
+    commands:
+      - echo "Building React application..."
+      - npm run build
+
+  post_build:
+    commands:
+      - echo "Deploying to S3..."
+      - aws s3 sync build/ s3://aiwav-website/ --delete
+      - echo "Creating CloudFront invalidation..."
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+
+artifacts:
+  base-directory: app/space/web/build
+  files:
+    - '**/*'
+
+cache:
+  paths:
+    - app/space/web/node_modules/**/* 

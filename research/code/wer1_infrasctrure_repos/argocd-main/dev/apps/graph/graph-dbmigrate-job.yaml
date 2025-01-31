@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: graph-migrate
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  backoffLimit: 1
+  completions: 1
+  template:
+    spec:
+      containers:
+        - name: graph-migration
+          image: 976284867583.dkr.ecr.eu-west-1.amazonaws.com/graph:1.75.0-dev
+          command:
+            - node
+            - ./dist/db/migrate.js
+          env:
+            - name: STAGE
+              value: dev
+            - name: PROJECT
+              value: wer1-graph
+          envFrom:
+            - secretRef:
+                name: doppler-secrets-graph
+                optional: false
+          imagePullPolicy: IfNotPresent
+          resources: {}
+      restartPolicy: Never

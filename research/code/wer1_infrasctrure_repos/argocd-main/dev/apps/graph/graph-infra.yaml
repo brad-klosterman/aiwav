@@ -1,0 +1,22 @@
+---
+apiVersion: secrets.doppler.com/v1alpha1
+kind: DopplerSecret
+metadata:
+  name: doppler-token-secret # DopplerSecret Name
+  namespace: doppler-operator-system
+spec:
+  tokenSecret: # Kubernetes service token secret (namespace defaults to doppler-operator-system)
+    name: doppler-token-secret
+  project: wer1-graph
+  config: dev
+  managedSecret: # Kubernetes managed secret (will be created if does not exist)
+    name: doppler-secrets-graph
+    namespace: graph # Should match the namespace of deployments that will use the secret
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::976284867583:role/Graph-wer1-dev
+  name: graph
+  namespace: graph

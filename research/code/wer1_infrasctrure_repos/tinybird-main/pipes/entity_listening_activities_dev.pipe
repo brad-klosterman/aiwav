@@ -1,0 +1,54 @@
+DESCRIPTION >
+	Gets all listening activities of a single Entity in a given timeframe
+
+TOKEN "retool_token" READ
+TOKEN "graph_dev" READ
+
+NODE new_entity_listening_activities_dev_pipe
+SQL >
+  %
+  SELECT
+    JSONExtractString(JSONExtractString(value, 'properties'), 'byEntityId') AS entityId,
+    JSONExtractString(JSONExtractString(value, 'properties'), 'onAssetId') AS assetId,
+    JSONExtractString(JSONExtractString(value, 'properties'), 'date') AS date,
+    JSONExtractInt(JSONExtractString(value, 'properties'), 'start') as start,
+    JSONExtractInt(JSONExtractString(value, 'properties'), 'end') as end,
+    JSONExtractInt(JSONExtractString(value, 'properties'), 'version') as version,
+    timestamp
+  FROM rudderstack_json_listening_dev
+  WHERE 
+    entityId = {{ String(entity_id) }}
+    AND timestamp >= {{ Date(start_date) }}
+    AND timestamp <= {{ Date(end_date) }}
+    AND timestamp >= '2024-03-26 13:08:00'
+  ORDER BY timestamp ASC
+
+NODE older_entity_listening_activities_dev_pipe
+SQL >
+  %
+  SELECT
+    JSONExtractString(value, 'properties_byEntityId') AS entityId,
+    JSONExtractString(value, 'properties_onAssetId') AS assetId,
+    JSONExtractString(value, 'properties_date') AS date,
+    JSONExtractInt(value, 'properties_start') as start,
+    JSONExtractInt(value, 'properties_end') as end,
+    JSONExtractInt(value, 'properties_version') as version,
+    timestamp
+  FROM rudderstack_json_listening_dev
+  WHERE
+    entityId = {{ String(entity_id) }}
+    AND timestamp >= {{ Date(start_date) }}
+    AND timestamp <= {{ Date(end_date) }}
+    AND timestamp <= '2024-03-26 13:08:00'
+  ORDER BY timestamp ASC
+
+NODE entity_listening_activities_dev_pipe
+SQL >
+  SELECT *
+  FROM
+    (
+      (SELECT * FROM new_entity_listening_activities_dev_pipe)
+      UNION ALL
+      (SELECT * FROM older_entity_listening_activities_dev_pipe)
+    )
+  ORDER BY timestamp ASC

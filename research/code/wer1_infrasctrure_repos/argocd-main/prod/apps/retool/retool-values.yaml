@@ -1,0 +1,44 @@
+image:
+  tag: "latest"
+config:
+  licenseKeySecretName: doppler-secrets-retool
+  licenseKeySecretKey: LICENSE_KEY
+  encryptionKeySecretName: doppler-secrets-retool
+  encryptionKeySecretKey: ENCRYPTION_KEY
+  jwtSecretSecretName: doppler-secrets-retool
+  jwtSecretSecretKey: JWT_SECRET
+  postgresql:
+    host: "production.cyf4qsypik3h.eu-west-1.rds.amazonaws.com"
+    port: 5432
+    db: "retool"
+    user: "retool"
+    passwordSecretName: doppler-secrets-retool
+    passwordSecretKey: POSTGRES_PASSWORD
+    ssl_enabled: true
+ingress:
+  enabled: true
+  ingressClassName: nginx-private
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-private
+  hosts:
+    - host: admin.private.prod.wer1.ai
+      paths:
+        - path: /
+  tls:
+    - hosts:
+        - admin.private.prod.wer1.ai
+      secretName: retool-ingress-tls
+postgresql:
+  enabled: false
+externalSecrets:
+  # Support for legacy external secrets, note this is deprecated in favour of External Secrets Operator: https://github.com/godaddy/kubernetes-external-secrets
+  # This mode only allows a single secret name to be provided.
+  enabled: true
+  name: doppler-secrets-retool
+  # # Array of secrets to be use as env variables. (Optional)
+  # secrets:
+  #   []
+  #   # - name: retool-config
+  #   # - name: retool-db
+workflows:
+  enabled: false

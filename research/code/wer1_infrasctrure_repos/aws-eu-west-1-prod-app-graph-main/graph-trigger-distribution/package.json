@@ -1,0 +1,10 @@
+{
+  "name": "graph-trigger-lambda",
+  "version": "1.0.0",
+  "description": "Lambda to process EventBridge events and trigger subscription distribution on the Graph",
+  "author": "WeR1",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}

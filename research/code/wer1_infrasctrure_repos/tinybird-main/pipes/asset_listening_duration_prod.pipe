@@ -1,0 +1,43 @@
+DESCRIPTION >
+	Gets the total listening duration of an asset for all time
+
+
+TOKEN "retool_token" READ
+TOKEN "graph_prod" READ
+
+NODE new_asset_listening_duration_prod_pipe
+SQL >
+  %
+  SELECT
+      JSONExtractString(JSONExtractString(value, 'properties'), 'onAssetId') AS assetId,
+      JSONExtractInt(JSONExtractString(value, 'properties'), 'start') as start,
+      JSONExtractInt(JSONExtractString(value, 'properties'), 'end') as end
+  FROM rudderstack_json_listening_prod
+  WHERE
+      assetId = {{ String(asset_id) }}
+      AND timestamp >= '2024-03-26 15:23:00'
+  ORDER BY timestamp ASC
+
+NODE older_asset_listening_duration_prod_pipe
+SQL >
+  %
+  SELECT
+      JSONExtractString(value, 'properties_onAssetId') AS assetId,
+      JSONExtractInt(value, 'properties_start') as start,
+      JSONExtractInt(value, 'properties_end') as end
+  FROM rudderstack_json_listening_prod
+  WHERE
+    assetId = {{ String(asset_id) }}
+    AND timestamp <= '2024-03-26 15:23:00'
+  ORDER BY timestamp ASC
+
+NODE asset_listening_duration_prod_pipe
+SQL >
+  SELECT SUM(end - start
+  ) as totalDuration
+  FROM
+      (
+          (SELECT * FROM new_asset_listening_duration_prod_pipe)
+          UNION ALL
+          (SELECT * FROM older_asset_listening_duration_prod_pipe)
+      )

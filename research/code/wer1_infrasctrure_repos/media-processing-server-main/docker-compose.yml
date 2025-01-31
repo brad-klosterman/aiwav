@@ -1,0 +1,44 @@
+version: '3.8'
+
+volumes:
+  redis-data:
+
+services:
+  media-processing-server:
+    container_name: ${PROJECT}
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        PROJECT: ${PROJECT}
+    ports:
+      - '4000:4000'
+    expose:
+      - '4000'
+    volumes:
+      - '/${PROJECT}/src/node_modules'
+      - '/${PROJECT}/src/build'
+      - './.aws:/root/.aws:delegated'
+      - '.:/${PROJECT}/src:delegated'
+    environment:
+      - NODE_ENV=development
+      - DOPPLER_TOKEN
+    entrypoint: top
+    networks:
+      - wer1
+    logging:
+      driver: none
+    platform: linux/arm64/v8
+    command: "node ./dist/app-local.js"
+  redis:
+    image: redis:latest
+    volumes:
+      - redis-data:/var/lib/redis
+    ports:
+      - '6379:6379'
+    networks:
+      - wer1
+networks:
+  wer1:
+    name: wer1
+    external: true

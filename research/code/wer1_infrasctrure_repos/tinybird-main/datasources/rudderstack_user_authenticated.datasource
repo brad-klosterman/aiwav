@@ -1,0 +1,20 @@
+
+SCHEMA >
+    `_metadata_nodeVersion` String `json:$._metadata.nodeVersion`,
+    `channel` String `json:$.channel`,
+    `context_ip` String `json:$.context.ip`,
+    `context_library_name` String `json:$.context.library.name`,
+    `context_library_version` String `json:$.context.library.version`,
+    `event` String `json:$.event`,
+    `messageId` String `json:$.messageId`,
+    `originalTimestamp` String `json:$.originalTimestamp`,
+    `receivedAt` String `json:$.receivedAt`,
+    `request_ip` String `json:$.request_ip`,
+    `rudderId` String `json:$.rudderId`,
+    `sentAt` String `json:$.sentAt`,
+    `timestamp` String `json:$.timestamp`,
+    `type` String `json:$.type`,
+    `userId` String `json:$.userId`
+
+ENGINE "MergeTree"
+ENGINE_SORTING_KEY "_metadata_nodeVersion, timestamp, type, userId"

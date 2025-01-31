@@ -1,0 +1,11 @@
+DESCRIPTION >
+	Get last active datetime for a user on production
+
+TOKEN "graph_prod" READ
+
+NODE user_last_active_prod_pipe
+SQL >
+  %
+  SELECT MAX(timestamp) as lastTimestamp
+  FROM rudderstack_listening_prod
+  WHERE userId = {{ String(user_id) }}

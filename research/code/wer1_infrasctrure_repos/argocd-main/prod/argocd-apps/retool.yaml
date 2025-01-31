@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: retool
+  namespace: argocd
+  annotations: {}
+spec:
+  destination:
+    namespace: retool
+    server: https://kubernetes.default.svc
+  project: retool
+  sources:
+    - chart: retool
+      repoURL: https://charts.retool.com
+      targetRevision: 6.2.8
+      path: retool
+      helm:
+        valueFiles:
+          - $values/prod/apps/retool/retool-values.yaml
+    - repoURL: https://github.com/wer1hub/argocd.git
+      targetRevision: HEAD
+      ref: values
+      path: prod/apps/retool
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true
+    automated:
+      selfHeal: true
+      prune: true

@@ -1,0 +1,23 @@
+name: 'Terraform Plan'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-plan:
+    name: 'Terraform Plan'
+    uses: lsdopen/.github/.github/workflows/terraform-root-plan.yaml@main
+    with:
+      aws-assume-role-arn: ${{ vars.AWS_ASSUME_ROLE_ARN }}
+      aws-assume-role-region: ${{ vars.AWS_ASSUME_ROLE_REGION }}
+      tailscale: true
+    secrets:
+      terraform-registry-token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+      tailscale-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+      tailscale-secret: ${{ secrets.TAILSCALE_SECRET }}
+      tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+      terraform-env-vars: TF_VAR_password='${{ secrets.TF_VAR_PASSWORD }}'

@@ -1,0 +1,15 @@
+DESCRIPTION >
+	Get the referral code used when a user signed up
+
+TOKEN "graph_prod" READ
+TOKEN "graph_dev" READ
+
+NODE user_referral_code_used_pipe
+SQL >
+    %
+        SELECT properties_refCode as refCode
+        FROM rudderstack_referral_code_used
+        WHERE properties_userId = {{ String(user_id) }}
+        ORDER BY timestamp
+        LIMIT 1
+        

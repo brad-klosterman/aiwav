@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: retool
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  destinations:
+    - namespace: retool
+      server: https://kubernetes.default.svc
+    - namespace: doppler-operator-system
+      server: https://kubernetes.default.svc
+  orphanedResources:
+    warn: false
+  sourceRepos:
+    - "*"

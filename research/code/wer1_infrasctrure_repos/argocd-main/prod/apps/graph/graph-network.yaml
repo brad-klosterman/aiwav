@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graph-private
+  namespace: graph
+spec:
+  ports:
+    - name: http
+      port: 4001
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: graph-private
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-private
+  name: graph-private
+  namespace: graph
+spec:
+  ingressClassName: nginx-private
+  rules:
+    - host: graph.private.prod.wer1.ai
+      http:
+        paths:
+          - backend:
+              service:
+                name: graph-private
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - graph.private.prod.wer1.ai
+      secretName: graph-private-ingress-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graph
+  namespace: graph
+spec:
+  ports:
+    - name: http
+      port: 4001
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: graph
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-public
+  name: graph-public
+  namespace: graph
+spec:
+  ingressClassName: nginx-public
+  rules:
+    - host: graph.public.prod.wer1.ai
+      http:
+        paths:
+          - backend:
+              service:
+                name: graph
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - graph.public.prod.wer1.ai
+      secretName: graph-ingress-tls

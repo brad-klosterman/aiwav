@@ -1,0 +1,29 @@
+name: 'Terraform Destroy'
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Confirm deletion of Terraform managed resources?'
+        required: true
+        default: 'false'
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-destroy:
+    name: 'Terraform Destroy'
+    uses: lsdopen/.github/.github/workflows/terraform-root-destroy.yaml@main
+    with:
+      confirm: ${{ github.event.inputs.confirm }}
+      aws-assume-role-arn: ${{ vars.AWS_ASSUME_ROLE_ARN }}
+      aws-assume-role-region: ${{ vars.AWS_ASSUME_ROLE_REGION }}
+      tailscale: true
+    secrets:
+      terraform-registry-token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
+      tailscale-client-id: ${{ secrets.TAILSCALE_CLIENT_ID }}
+      tailscale-secret: ${{ secrets.TAILSCALE_SECRET }}
+      tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}

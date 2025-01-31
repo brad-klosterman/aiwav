@@ -1,0 +1,29 @@
+---
+apiVersion: secrets.doppler.com/v1alpha1
+kind: DopplerSecret
+metadata:
+  name: doppler-secrets-landing # DopplerSecret Name
+  namespace: doppler-operator-system
+spec:
+  tokenSecret: # Kubernetes service token secret (namespace defaults to doppler-operator-system)
+    name: doppler-token-secret
+  project: landing-page
+  config: prod
+  managedSecret: # Kubernetes managed secret (will be created if does not exist)
+    name: doppler-secrets-landing
+    namespace: landing-page # Should match the namespace of deployments that will use the secret
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: landing-page-uploads
+  namespace: landing-page
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs
+  volumeMode: Filesystem
+  volumeName: pvc-5af11abf-b6d1-47f6-91ec-b73fd88351be

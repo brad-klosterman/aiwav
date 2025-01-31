@@ -1,0 +1,85 @@
+{
+  "date": {
+    "type": "mockingbird.datetimeBetween",
+    "params": [
+        {
+            "start": "2024-02-01T00:00:00.000Z", 
+            "end": "2024-02-29T23:59:59.999Z"
+        }
+    ]
+  },
+  "byEntityId": {
+    "type": "mockingbird.pick",
+    "params": [
+      {
+        "values": [
+          "32cded36-fd05-4039-ad47-23bdef401770",
+          "d461470a-daa2-47e2-9986-ac68a7eedc1e",
+          "12f79e6f-7665-4473-891c-48faaf9f7541",
+          "eaf888eb-e867-4ee2-8b70-a5f76abac592",
+          "2139d804-da95-498c-aca0-623202429b8b",
+          "ed29565f-2ee5-4164-b7b9-09e7caad1481",
+          "1dc03bdd-2e9d-4448-909c-30aa825d00bf",
+          "ee3bbf3f-16f2-4416-9253-2b4fd1ffe7ef",
+          "937a20e3-10fd-483e-a0c7-d3d4c1bf2617",
+          "65539adc-1568-4e79-b45a-216df926065c"
+        ]
+      }
+    ]
+  },
+  "onAssetId": {
+    "type": "mockingbird.pick",
+    "params": [
+      {
+        "values": [
+          "f6106084-ae7d-4738-b730-83b41ae2f45e", 
+          "b9943a57-8565-4eac-ab72-b6ce0e9925db",
+          "c23b2242-54a3-407e-a8e3-3235a5417d2d",
+          "f0588bd9-f4e0-460b-95df-0e8d49e77876"
+        ]
+      }
+    ]
+  },
+  "start": {
+    "type": "number.int",
+    "params": [
+      {
+        "min": 0,
+        "max": 30000
+      }
+    ]
+  },
+  "end": {
+    "type": "number.int",
+    "params": [
+      {
+        "min": 600000,
+        "max": 1200000
+      }
+    ]
+  },
+  "version": {
+    "type": "number.int",
+    "params": [
+      {
+        "min": 1,
+        "max": 1
+      }
+    ]
+  },
+  "reversal": {
+    "type": "mockingbird.pickWeighted",
+    "params": [
+      {
+        "values": [
+          true,
+          false
+        ],
+        "weights": [
+          1,
+          99
+        ]
+      }
+    ]
+  }
+}

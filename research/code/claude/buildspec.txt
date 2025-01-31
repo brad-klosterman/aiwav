@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - npm install -g pnpm
+      
+  pre_build:
+    commands:
+      - pnpm install
+      
+  build:
+    commands:
+      - pnpm run build
+      
+  post_build:
+    commands:
+      - aws s3 sync build/ s3://aiwav-website/ --delete
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: build

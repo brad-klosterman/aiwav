@@ -1,0 +1,14 @@
+{
+  "name": "aiwav",
+  "private": true,
+  "workspaces": [
+    "app/space/web",
+    "app/space/mobile"
+  ],
+  "scripts": {
+    "web": "npm run start --workspace=app/space/web",
+    "mobile": "npm run start --workspace=app/space/mobile",
+    "build:web": "npm run build --workspace=app/space/web",
+    "build:mobile": "npm run build --workspace=app/space/mobile"
+  }
+} 

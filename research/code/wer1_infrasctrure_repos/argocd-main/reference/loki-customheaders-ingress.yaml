@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-public
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required - Loki Ingress
+    nginx.ingress.kubernetes.io/auth-secret: loki-gateway-nginx-auth
+    nginx.ingress.kubernetes.io/auth-secret-type: auth-map
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/configuration-snippet:
+      "more_set_headers \"x-vercel-verify:
+      397e81b2ceaa3973bc79ca09955279ab14f1ce2f\" \n"
+  creationTimestamp: "2024-05-21T12:45:22Z"
+  generation: 1
+  name: loki-gateway
+  namespace: observability
+  resourceVersion: "133595964"
+  uid: 57d5d37a-a72f-4dd5-a6e4-09e3716f0a82
+spec:
+  ingressClassName: nginx-public
+  rules:
+    - host: loki-gateway.public.dev.wer1.ai
+      http:
+        paths:
+          - backend:
+              service:
+                name: loki-gateway
+                port:
+                  number: 80
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - loki-gateway.public.dev.wer1.ai
+      secretName: loki-gateway-ingress-tls
+status:
+  loadBalancer:
+    ingress:
+      - hostname: k8s-clusters-ingressn-569542a55e-d3875d387cb1662d.elb.eu-west-1.amazonaws.com

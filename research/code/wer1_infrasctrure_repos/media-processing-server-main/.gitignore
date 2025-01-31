@@ -1,0 +1,32 @@
+# build directories
+**/build
+**/dist
+
+# Webpack directories
+**/.webpack
+
+# aws
+**/.aws/**
+
+# Error Logs
+*error.log
+
+# pnpm store
+.pnpm-store
+
+# Security report
+zap-report.html
+
+node_modules
+.DS_Store
+
+# Local databases
+*.db
+*.sqlite
+*.rdb
+
+# Env variables and files
+.env
+.env.local
+.env.override
+.env.*

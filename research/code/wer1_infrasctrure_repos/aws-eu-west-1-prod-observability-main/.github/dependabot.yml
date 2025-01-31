@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: terraform
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "thursday"
+      time: "01:00"
+      timezone: "Africa/Johannesburg"
+    registries:
+      - app-terraform-io
+registries:
+  app-terraform-io:
+    type: terraform-registry
+    url: https://app.terraform.io
+    token: ${{secrets.TF_TOKEN_APP_TERRAFORM_IO}}

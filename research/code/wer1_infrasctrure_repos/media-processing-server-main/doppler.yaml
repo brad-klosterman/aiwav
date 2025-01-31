@@ -1,0 +1,3 @@
+setup:
+  project: media-processing-server
+  config: dev

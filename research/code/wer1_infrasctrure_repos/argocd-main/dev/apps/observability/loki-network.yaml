@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-public
+    kubernetes.io/ingress.allow-http: "true"
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required - Loki Ingress
+    nginx.ingress.kubernetes.io/auth-secret: loki-ingress-nginx-auth
+    nginx.ingress.kubernetes.io/auth-secret-type: auth-map
+    nginx.ingress.kubernetes.io/auth-type: basic
+  name: loki-write
+  namespace: observability
+spec:
+  ingressClassName: nginx-public
+  rules:
+    - host: loki-write.public.dev.wer1.ai
+      http:
+        paths:
+          - backend:
+              service:
+                name: loki-write
+                port:
+                  number: 3100
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - loki-write.public.dev.wer1.ai
+      secretName: loki-write-ingress-tls

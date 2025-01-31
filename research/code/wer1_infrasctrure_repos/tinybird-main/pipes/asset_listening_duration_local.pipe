@@ -1,0 +1,15 @@
+DESCRIPTION >
+	Gets the total listening duration of an asset for all time
+
+
+TOKEN "retool_token" READ
+TOKEN "graph_dev" READ
+
+NODE asset_listening_duration_local_pipe
+SQL >
+  %
+  SELECT
+    SUM(properties_end - properties_start) as totalDuration
+  FROM rudderstack_listening_local
+  WHERE
+    properties_onAssetId = {{ String(asset_id) }}

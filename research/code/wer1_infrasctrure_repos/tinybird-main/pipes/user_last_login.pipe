@@ -1,0 +1,14 @@
+DESCRIPTION >
+	Get last logged in datetime for a user
+
+TOKEN "graph_prod" READ
+TOKEN "graph_dev" READ
+
+NODE user_last_login_pipe
+SQL >
+    %
+        SELECT MAX(timestamp) as lastTimestamp
+        FROM rudderstack_user_authenticated
+        WHERE userId = {{ String(user_id) }}
+        GROUP BY userId
+        

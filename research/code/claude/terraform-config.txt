@@ -1,0 +1,130 @@
+# main.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  
+  backend "s3" {
+    bucket = "aiwav-terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "us-west-2"
+    encrypt = true
+  }
+}
+
+provider "aws" {
+  region = "us-west-2"
+}
+
+# S3 bucket for static website hosting
+resource "aws_s3_bucket" "website" {
+  bucket = "aiwav-website"
+}
+
+resource "aws_s3_bucket_website_configuration" "website" {
+  bucket = aws_s3_bucket.website.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+
+# CloudFront distribution
+resource "aws_cloudfront_distribution" "website" {
+  origin {
+    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id   = "S3-${aws_s3_bucket.website.bucket}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.website.cloudfront_access_identity_path
+    }
+  }
+
+  enabled             = true
+  default_root_object = "index.html"
+  price_class         = "PriceClass_100"
+  
+  custom_error_response {
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+  }
+
+  default_cache_behavior {
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "S3-${aws_s3_bucket.website.bucket}"
+    viewer_protocol_policy = "redirect-to-https"
+    
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+# CodePipeline for CI/CD
+resource "aws_codepipeline" "website" {
+  name     = "aiwav-website-pipeline"
+  role_arn = aws_iam_role.codepipeline.arn
+
+  artifact_store {
+    location = aws_s3_bucket.artifacts.bucket
+    type     = "S3"
+  }
+
+  stage {
+    name = "Source"
+    action {
+      name             = "Source"
+      category         = "Source"
+      owner           = "AWS"
+      provider        = "CodeStarSourceConnection"
+      version         = "1"
+      output_artifacts = ["source_output"]
+
+      configuration = {
+        ConnectionArn    = aws_codestarconnections_connection.github.arn
+        FullRepositoryId = "your-github-org/aiwav-website"
+        BranchName      = "main"
+      }
+    }
+  }
+
+  stage {
+    name = "Build"
+    action {
+      name            = "Build"
+      category        = "Build"
+      owner          = "AWS"
+      provider       = "CodeBuild"
+      input_artifacts = ["source_output"]
+      version        = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.website.name
+      }
+    }
+  }
+}
+
+# Additional resources for CodeBuild, IAM roles, and policies will be needed

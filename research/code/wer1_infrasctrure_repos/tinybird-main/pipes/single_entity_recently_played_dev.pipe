@@ -1,0 +1,21 @@
+DESCRIPTION >
+	Gets recently played tracks/sets of a single Entity, given entity_id and limit
+
+
+TOKEN "retool_token" READ
+
+TOKEN "graph_dev" READ
+
+NODE single_entity_recently_played_dev_pipe
+SQL >
+  %
+  SELECT
+      JSONExtractString(JSONExtractString(value, 'properties'), 'byEntityId') as byEntityId,
+      JSONExtractString(JSONExtractString(value, 'properties'), 'onAssetId') as onAssetId,
+      max(timestamp) as recent_listen
+  FROM rudderstack_json_listening_dev
+  WHERE
+    byEntityId = {{ String(entity_id) }}
+  GROUP BY byEntityId, onAssetId
+  ORDER BY recent_listen DESC
+  LIMIT {{ Int32(limit) }}

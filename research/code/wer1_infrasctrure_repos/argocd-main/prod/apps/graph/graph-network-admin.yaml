@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graph-private-admin
+  namespace: graph
+spec:
+  ports:
+    - name: http
+      port: 4002
+      protocol: TCP
+      targetPort: http
+  selector:
+    app: graph-private-admin
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: nginx-private
+  name: graph-private-admin
+  namespace: graph
+spec:
+  ingressClassName: nginx-private
+  rules:
+    - host: graph.admin.private.prod.wer1.ai
+      http:
+        paths:
+          - backend:
+              service:
+                name: graph-private-admin
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - graph.admin.private.prod.wer1.ai
+      secretName: graph-private-admin-ingress-tls

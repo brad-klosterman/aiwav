@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: landing
+  namespace: argocd
+  annotations: {}
+spec:
+  destination:
+    namespace: landing-page
+    server: https://kubernetes.default.svc
+  project: landing
+  source:
+    path: prod/apps/landing
+    repoURL: https://github.com/wer1hub/argocd.git
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - Replace=true
+    automated:
+      selfHeal: true
+      prune: true

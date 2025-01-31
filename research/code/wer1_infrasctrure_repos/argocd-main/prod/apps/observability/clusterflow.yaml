@@ -1,0 +1,22 @@
+apiVersion: logging.banzaicloud.io/v1beta1
+kind: ClusterFlow
+metadata:
+  name: application
+  namespace: observability
+spec:
+  filters:
+    - parser:
+        parse:
+          time_key: nil
+          type: json
+        remove_key_name_field: true
+        reserve_data: true
+  globalOutputRefs:
+    - loki
+  match:
+    - select:
+        namespaces:
+          - graph
+          - argocd
+          - retool
+          - landing

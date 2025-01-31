@@ -42,14 +42,14 @@ AI Wave revolutionizes music production by creating an interactive virtual studi
 
 ### Revenue Streams
 1. Studio Access
-   - Base fee: $1 per session
+   - Base fee: $10 per session
    - Duration-based pricing options
    - Subscription plans for regular users
 
 2. AI Character Marketplace
-   - Standard AI character access: $1-2 per session
-   - Premium artist-trained AI characters: Variable pricing $100-$1000 per session
-   - Revenue sharing with contributing artists, in return the artist needs to help train the AI character
+   - Standard AI character access: $10-20 per session
+   - Premium artist-trained AI characters: Variable pricing
+   - Revenue sharing with contributing artists
 
 3. Additional Services
    - Custom AI character development
